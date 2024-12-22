@@ -15,13 +15,4 @@
     "NLTK_DATA": {"value": "/app/nltk_data"}
   }
 }
-```
-Lekin mere Harry, yeh file mein `TOKEN` ko environment variable ke roop mein set karna hai Heroku dashboard par ya Heroku CLI se. 
-**Heroku CLI command:**
-```
-heroku config:set TOKEN=YOUR_TELEGRAM_BOT_TOKEN
-```
-Replace `YOUR_TELEGRAM_BOT_TOKEN` with actual token!
-Chalo ab app.json ko use karte hain? 
-1. Haan, use karte hain 
-2. Heroku dashboard se TOKEN set karna hai 💕
+
