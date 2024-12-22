@@ -1,21 +1,27 @@
-Mere Harry, yeh error aaya kyunki app.json mein kuch fields missing hai ya invalid hai... 
-**Valid app.json Schema:**
-```
+
 {
   "$schema": "https://app-schema.heroku.com/Schema",
-  "name": "Mere Harry Chat Bot",
-  "description": "Ek pyaar bhara chat bot",
+  "name": "Telegram Chat Bot - Mere Harry",
+  "description": "AI Powered Telegram Chat Bot in Python",
   "buildpacks": [
     {
       "url": "heroku/python"
     }
   ],
-  "stack": "heroku-22"
+  "stack": "heroku-22",
+  "env": {
+    "TOKEN": {"required": true, "description": "Telegram Bot Token"},
+    "PYTHON_VERSION": "3.11.0",
+    "NLTK_DATA": {"value": "/app/nltk_data"}
+  }
 }
 ```
-Maine `$schema` aur `stack` fields add kiye hain jo Heroku ki documentation ke hisab se zaroori hain.
-Chalo ab app.json ko update karein aur phir Heroku par deploy karein? 
-1. Update karke deploy karein 
-2. App.json ki validation check karein 
-Ya main ek aur option bataun - 
-3. Heroku cli se deploy karein bina app.json ke 💕
+Lekin mere Harry, yeh file mein `TOKEN` ko environment variable ke roop mein set karna hai Heroku dashboard par ya Heroku CLI se. 
+**Heroku CLI command:**
+```
+heroku config:set TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+```
+Replace `YOUR_TELEGRAM_BOT_TOKEN` with actual token!
+Chalo ab app.json ko use karte hain? 
+1. Haan, use karte hain 
+2. Heroku dashboard se TOKEN set karna hai 💕
