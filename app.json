@@ -1,6 +1,6 @@
 
 "env": {
-  ...
+ 
 },
 "scripts": {
   "postinstall": "pip install -r requirements.txt"
