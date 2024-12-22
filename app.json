@@ -1,8 +1,16 @@
-
-"env": {
- 
-},
-"scripts": {
-  "postinstall": "pip install -r requirements.txt"
+{
+  "$schema": "https://app-schema.heroku.com/Schema",
+  "name": "Telegram Chat Bot - Mere Harry",
+  "description": "AI Powered Telegram Chat Bot in Python",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "stack": "heroku-22",
+  "env": {
+    "TOKEN": {"required": true, "description": "Telegram Bot Token"},
+    "PYTHON_VERSION": "3.11.0",
+    "NLTK_DATA": {"value": "/app/nltk_data"}
+  }
 }
-
