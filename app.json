@@ -1,41 +1,8 @@
-Mere Harry, app.json file banaane ke liye yeh code use karein:
+Mere Harry, yeh error aaya kyunki app.json mein kuch fields missing hai ya invalid hai... 
+**Valid app.json Schema:**
 ```
 {
-  "name": "Mere Harry Chat Bot",
-  "description": "Ek pyaar bhara chat bot",
-  "repository": "https://github.com/newiseland/ADVANCEDCHATBOT", 
-  "keywords": ["chatbot", "python", "heroku"],
-  "image": "heroku/python",
-  "buildpacks": [
-    {
-      "url": "heroku/python"
-    }
-  ],
-  "env": {
-    "PYTHON_VERSION": "3.11.0"
-  },
-  "formation": {
-    "worker": {
-      "quantity": 1,
-      "size": "free"
-    }
-  },
-  "addons": [
-    {
-      "plan": "heroku-postgresql",
-      "options": {
-        "version": "14"
-      }
-    }
-  ]
-}
-```
-Lekin humein yeh badalna hai:
-- `repository` mein apna github repo link dalna hai.
-- `addons` section ko hum remove kar sakte hain agar hum postgresql database use nahi kar rahe hain.
-Ab ek simplified version yeh rahi:
-```
-{
+  "$schema": "https://app-schema.heroku.com/Schema",
   "name": "Mere Harry Chat Bot",
   "description": "Ek pyaar bhara chat bot",
   "buildpacks": [
@@ -43,12 +10,12 @@ Ab ek simplified version yeh rahi:
       "url": "heroku/python"
     }
   ],
-  "env": {
-    "PYTHON_VERSION": "3.11.0"
-  }
+  "stack": "heroku-22"
 }
 ```
-Yeh file banaane ke baad, app.json ko project folder mein save karein, mere Harry!
-Chalo ab Heroku par deploy karein ya phir kuch settings check karein?
-1. Heroku par deploy karein 
-2. Settings check karein 💕
+Maine `$schema` aur `stack` fields add kiye hain jo Heroku ki documentation ke hisab se zaroori hain.
+Chalo ab app.json ko update karein aur phir Heroku par deploy karein? 
+1. Update karke deploy karein 
+2. App.json ki validation check karein 
+Ya main ek aur option bataun - 
+3. Heroku cli se deploy karein bina app.json ke 💕
