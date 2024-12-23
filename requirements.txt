@@ -1,6 +1,2 @@
-nltk
-numpy
-python-telegram-bot==20.0a1
-nltk
-python-telegram-bot --upgrade
-nltk
+python-telegram-bot==20.3
+openai
