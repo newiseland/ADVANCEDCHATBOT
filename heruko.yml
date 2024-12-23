@@ -1,5 +1,1 @@
-build:
-  docker:
-    web: Dockerfile  # Specifies the Dockerfile to use for building the app
-run:
-  web: python main.py  # Command to run your app
+CMD ["python", "/app/telegram_chatgpt_bot.py"]
