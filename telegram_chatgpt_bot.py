@@ -10,11 +10,11 @@ logging.basicConfig(
 )
 
 # OpenAI API Key
-OPENAI_API_KEY = "your_openai_api_key"
+OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
 # Telegram Bot Token
-TELEGRAM_BOT_TOKEN = "your_telegram_bot_token"
+TELEGRAM_BOT_TOKEN = "7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w"
 
 # Define system message (optional, guides bot behavior)
 SYSTEM_MESSAGE = "You are an advanced AI assistant skilled in answering technical and general queries."
