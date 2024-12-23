@@ -1,6 +1,6 @@
 import logging
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from app import Update
+from app.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import openai
 
 # Configure logging
