@@ -43,7 +43,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Welcome message
     welcome_message = (
         f"👋 **Hello, {update.effective_user.first_name}!**\n\n"
-        "✨ I am @{bot_username}your assistant powered by @SANATANI_BACHA auto-reply. Ask me anything!\n\n"
+        "✨ I am @{bot_username} your assistant powered by @SANATANI_BACHA auto-reply. Ask me anything!\n\n"
         "🌟 **Special Features:**\n"
         "- 🌍 Change the reply language using the buttons below.\n"
         "- 🔍 Enjoy fast and accurate responses.\n\n"
