@@ -1,2 +1,2 @@
-openai
-python-telegram-bot==20.0  # or the version you are using
+openai==0.28.0
+python-telegram-bot==20.3  # or the version you are using
