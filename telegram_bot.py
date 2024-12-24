@@ -1,10 +1,10 @@
 import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, CallbackQueryHandler, ContextTypes
 from pymongo import MongoClient
 
 # MongoDB URI for connecting to the database
-MONGO_URI = "mongodb+srv://harryashutosh729:harryashutosh729@harry2.xykka.mongodb.net/?retryWrites=true&w=majority&appName=harry2"  # Replace this with your MongoDB URI if needed
+MONGO_URI = "mongodb://localhost:27017/"  # Replace this with your MongoDB URI if needed
 DB_NAME = "telegram_bot_db"  # Database name
 COLLECTION_NAME = "auto_replies"  # Collection name for storing auto-replies
 
@@ -122,7 +122,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 # Main function
 def main():
     # Telegram bot token
-    application = ApplicationBuilder().token("7649873136:AAGgVobroAHZMV7_1gGVNjeUJ_M78oq6vik").build()  # Replace with your bot's token
+    application = ApplicationBuilder().token("YOUR_BOT_API_KEY").build()  # Replace with your bot's token
 
     # Command handlers
     application.add_handler(CommandHandler("start", start))
@@ -132,7 +132,7 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply))
 
     # Callback Query handler
-    application.add_handler(CallbackQueryHandler(button))
+    application.add_handler(CallbackQueryHandler(button))  # Make sure to import CallbackQueryHandler
 
     print("Bot is running... Use /start to test it!")
     application.run_polling()
