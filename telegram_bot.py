@@ -1,62 +1,34 @@
-import openai
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram import filters  # Updated filters import
 
-# Set your OpenAI API key and Telegram bot token
-OPENAI_API_KEY = "<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>"
-TELEGRAM_BOT_TOKEN = "7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w"
-
-# Configure OpenAI API key
-openai.api_key = OPENAI_API_KEY
-
-# Function to get a response from OpenAI GPT model
-def chat_with_gpt(prompt):
-    """Send a prompt to OpenAI API and get the response."""
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",  # Use gpt-3.5-turbo if gpt-4 is unavailable
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=0.7,
-            max_tokens=200,
-        )
-        return response["choices"][0]["message"]["content"].strip()
-    except Exception as e:
-        return f"Error: {e}"
-
-# Start command handler
+# Function to handle the /start command
 def start(update: Update, context: CallbackContext) -> None:
-    """Send a welcome message when the /start command is issued."""
-    update.message.reply_text("Hello! I am your assistant. Ask me anything!")
+    update.message.reply_text("Hello! I am your bot. How can I assist you?")
 
-# Message handler for user queries
+# Function to handle regular messages
 def handle_message(update: Update, context: CallbackContext) -> None:
-    """Process user messages and respond with OpenAI's GPT."""
-    user_message = update.message.text
-    update.message.reply_text("Thinking...")
-    try:
-        # Get GPT response
-        response = chat_with_gpt(user_message)
-        update.message.reply_text(response)
-    except Exception as e:
-        update.message.reply_text(f"Error: {e}")
+    user_message = update.message.text.lower()
+    if "hello" in user_message:
+        update.message.reply_text("Hi there! How can I help you?")
+    elif "bye" in user_message:
+        update.message.reply_text("Goodbye! Have a great day!")
+    else:
+        update.message.reply_text("I'm not sure how to respond to that.")
 
-# Main function to run the bot
+# Main function to start the bot
 def main():
-    """Start the Telegram bot."""
-    updater = Updater(TELEGRAM_BOT_TOKEN)
+    # Replace 'YOUR_BOT_TOKEN' with your actual bot token
+    bot_token = "7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w"
+
+    # Create the Updater and pass the bot token
+    updater = Updater(token=bot_token)
+
+    # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
 
-    # Add command and message handlers
+    # Command handler for /start
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
-    # Start the bot
-    updater.start_polling()
-    updater.idle()
-
-# Run the bot
-if __name__ == "__main__":
-    main()
+    # Message handler for all text messages
+    dispatcher.add
