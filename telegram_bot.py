@@ -1,12 +1,19 @@
 import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 from pymongo import MongoClient
 
+# MongoDB setup
+MONGO_URI = "mongodb://localhost:27017/"  # Replace with your MongoDB URI
+DB_NAME = "telegram_bot_db"
+COLLECTION_NAME = "chat_responses"
+SETTINGS_COLLECTION = "chat_settings"
+
 # Connect to MongoDB
-mongo_client = MongoClient("mongodb+srv://harryashutosh729:harryashutosh729@harry2.xykka.mongodb.net/?retryWrites=true&w=majority&appName=harry2")
-db = mongo_client["telegram_bot_db"]  # Database name
-auto_reply_collection = db["auto_replies"]  # Collection for auto-replies
+mongo_client = MongoClient(MONGO_URI)
+db = mongo_client[DB_NAME]
+collection = db[COLLECTION_NAME]
+settings_collection = db[SETTINGS_COLLECTION]
 
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -38,7 +45,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Welcome message
     welcome_message = (
         f"👋 **Hello, {update.effective_user.first_name}!**\n\n"
-        "✨ I am your assistant powered by MongoDB-based auto-reply. Ask me anything!\n\n"
+        "✨ I am your assistant powered by a custom MongoDB database. Ask me anything!\n\n"
         "🌟 **Special Features:**\n"
         "- 🌍 Change the reply language using the buttons below.\n"
         "- 🔍 Enjoy fast and accurate responses.\n\n"
@@ -53,31 +60,67 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         parse_mode="Markdown"
     )
 
-# Auto-reply function
-async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Auto-reply to user messages based on MongoDB data."""
-    user_message = update.message.text.lower()
+# Command: Enable chatbot
+async def enable_chatbot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Enable chatbot for a group."""
+    if update.effective_chat.type not in ["group", "supergroup"]:
+        await update.message.reply_text("This command can only be used in groups.")
+        return
 
-    # Query MongoDB for a matching question
-    result = auto_reply_collection.find_one({"question": user_message})
+    chat_id = update.effective_chat.id
 
-    if result:
-        bot_response = result["response"]
+    # Remove chat from the disabled list in MongoDB
+    settings_collection.delete_one({"chat_id": chat_id})
+    await update.message.reply_text("Chatbot has been enabled for this group!")
+
+# Command: Disable chatbot
+async def disable_chatbot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Disable chatbot for a group."""
+    if update.effective_chat.type not in ["group", "supergroup"]:
+        await update.message.reply_text("This command can only be used in groups.")
+        return
+
+    chat_id = update.effective_chat.id
+
+    # Add chat to the disabled list in MongoDB
+    if not settings_collection.find_one({"chat_id": chat_id}):
+        settings_collection.insert_one({"chat_id": chat_id})
+    await update.message.reply_text("Chatbot has been disabled for this group!")
+
+# Handle user messages
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Respond to user messages based on MongoDB data."""
+    chat_id = update.effective_chat.id
+
+    # Check if chatbot is disabled for this chat
+    if settings_collection.find_one({"chat_id": chat_id}):
+        return  # Ignore messages if chatbot is disabled
+
+    user_message = update.message.text
+
+    # Query MongoDB for a response
+    response = collection.find_one({"question": user_message})
+
+    if response:
+        # Reply with the stored answer
+        reply = response.get("answer", "Sorry, I don't know the answer to that.")
     else:
-        bot_response = "Sorry, I don't have an answer for that right now."
+        # Reply with a default message if no answer is found
+        reply = "I don't know the answer to that yet. Please ask something else."
 
-    # Send the response to the user
-    await update.message.reply_text(bot_response)
+    await update.message.reply_text(reply)
 
-# Main function
 def main():
-    application = ApplicationBuilder().token("7649873136:AAGgVobroAHZMV7_1gGVNjeUJ_M78oq6vik").build()
+    # Telegram bot token
+    application = ApplicationBuilder().token("YOUR_BOT_TOKEN").build()
 
     # Command handlers
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("chatbot_on", enable_chatbot))
+    application.add_handler(CommandHandler("chatbot_off", disable_chatbot))
 
-    # Message handler for auto-reply
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply))
+    # Message handler
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     print("Bot is running... Use /start to test it!")
     application.run_polling()
