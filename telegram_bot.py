@@ -1,4 +1,5 @@
 import openai
+import os
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -8,53 +9,52 @@ from telegram.ext import (
     ContextTypes,
 )
 
-# Set your OpenAI API key
-openai.api_key = "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"
+# Set up OpenAI API key
+openai.api_key = os.getenv("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")
 
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a welcome message when the /start command is issued."""
-    await update.message.reply_text("Hello! I am ChatGPT-powered bot. How can I help you today?")
+    await update.message.reply_text("Hello! I am your ChatGPT-powered assistant. Ask me anything!")
 
 # Command: Help
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send help information when the /help command is issued."""
-    await update.message.reply_text("You can ask me anything, and I'll try my best to assist you!")
+    await update.message.reply_text("You can ask me questions, and I'll try my best to answer them!")
 
-# ChatGPT Integration
-async def chat_with_gpt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Process user messages and return ChatGPT responses."""
+# Handle user messages
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Process user messages and fetch ChatGPT responses."""
     user_message = update.message.text
     try:
-        # Call OpenAI API
+        # Fetch response from OpenAI
         response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_message},
-            ],
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_message}],
+            temperature=0.7,
         )
-        # Extract GPT's reply
-        gpt_reply = response["choices"][0]["message"]["content"]
-        await update.message.reply_text(gpt_reply)
+        reply = response["choices"][0]["message"]["content"].strip()
     except Exception as e:
         print(f"Error: {e}")
-        await update.message.reply_text("Sorry, I couldn't process that. Please try again later.")
+        reply = "Sorry, I couldn't process that. Please try again later."
+    
+    await update.message.reply_text(reply)
 
-# Main Function
+# Main function
 def main():
-    # Replace 'YOUR_TELEGRAM_BOT_TOKEN' with your bot's token
+    """Run the bot."""
+    # Replace 'YOUR_BOT_TOKEN' with your Telegram Bot token
     application = ApplicationBuilder().token("7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w").build()
 
-    # Command Handlers
+    # Command handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
 
-    # Message Handler (ChatGPT Integration)
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, chat_with_gpt))
+    # Message handler
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    # Run the bot
-    print("ChatGPT Bot is running...")
+    # Start the bot
+    print("Bot is running made by harry...")
     application.run_polling()
 
 if __name__ == "__main__":
