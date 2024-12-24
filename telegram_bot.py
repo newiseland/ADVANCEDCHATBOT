@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 
 # Set up OpenAI API key
-openai.api_key = ("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")
+openai.api_key = ("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")
 
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
