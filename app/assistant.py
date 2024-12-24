@@ -1,89 +1,62 @@
-import logging
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import openai
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
-# Configure logging
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.INFO
-)
-
-# OpenAI API Key
-OPENAI_API_KEY = "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"
-openai.api_key = OPENAI_API_KEY
-
-# Telegram Bot Token
+# Set your OpenAI API key and Telegram bot token
+OPENAI_API_KEY = "<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>"
 TELEGRAM_BOT_TOKEN = "7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w"
 
-# Define system message (optional, guides bot behavior)
-SYSTEM_MESSAGE = "You are an advanced AI assistant skilled in answering technical and general queries."
+# Configure OpenAI API key
+openai.api_key = OPENAI_API_KEY
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    Handle the /start command.
-    """
-    await update.message.reply_text(
-        "Hello! I'm your ChatGPT-powered bot. Ask me anything!"
-    )
-
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    Handle the /help command.
-    """
-    await update.message.reply_text(
-        "I am an AI bot powered by OpenAI's GPT model. Just type your question, and I'll respond!"
-    )
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    Handle user messages and generate responses using OpenAI's GPT API.
-    """
-    user_message = update.message.text
+# Function to get a response from OpenAI GPT model
+def chat_with_gpt(prompt):
+    """Send a prompt to OpenAI API and get the response."""
     try:
-        logging.info(f"Received message: {user_message}")
-        
-        # Call OpenAI API to generate a response
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # Use "gpt-3.5-turbo" if "gpt-4" is unavailable
+            model="gpt-4",  # Use gpt-3.5-turbo if gpt-4 is unavailable
             messages=[
-                {"role": "system", "content": SYSTEM_MESSAGE},
-                {"role": "user", "content": user_message},
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt},
             ],
             temperature=0.7,
-            max_tokens=1500,
+            max_tokens=200,
         )
-        bot_reply = response["choices"][0]["message"]["content"]
-        await update.message.reply_text(bot_reply)
+        return response["choices"][0]["message"]["content"].strip()
     except Exception as e:
-        logging.error(f"Error generating response: {e}")
-        await update.message.reply_text("I'm sorry, I encountered an error. Please try again later.")
+        return f"Error: {e}"
 
-async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
-    """
-    Log the errors caused by updates.
-    """
-    logging.error(msg="Exception while handling an update:", exc_info=context.error)
+# Start command handler
+def start(update: Update, context: CallbackContext) -> None:
+    """Send a welcome message when the /start command is issued."""
+    update.message.reply_text("Hello! I am your assistant. Ask me anything!")
 
+# Message handler for user queries
+def handle_message(update: Update, context: CallbackContext) -> None:
+    """Process user messages and respond with OpenAI's GPT."""
+    user_message = update.message.text
+    update.message.reply_text("Thinking...")
+    try:
+        # Get GPT response
+        response = chat_with_gpt(user_message)
+        update.message.reply_text(response)
+    except Exception as e:
+        update.message.reply_text(f"Error: {e}")
+
+# Main function to run the bot
 def main():
-    """
-    Start the Telegram bot.
-    """
-    application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+    """Start the Telegram bot."""
+    updater = Updater(TELEGRAM_BOT_TOKEN)
+    dispatcher = updater.dispatcher
 
-    # Command handlers
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
+    # Add command and message handlers
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_message))
 
-    # Message handler
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    # Start the bot
+    updater.start_polling()
+    updater.idle()
 
-    # Error handler
-    application.add_error_handler(error_handler)
-
-    # Run the bot
-    logging.info("Starting the bot...")
-    application.run_polling()
-
+# Run the bot
 if __name__ == "__main__":
     main()
