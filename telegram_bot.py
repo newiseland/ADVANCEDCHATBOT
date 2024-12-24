@@ -38,7 +38,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             InlineKeyboardButton("🌐 Network", url="https://t.me/TG_NAME_STYLE"),
         ],
         [
-            InlineKeyboardButton("❓ Help", callback_data="help"),
+            InlineKeyboardButton("❓ Help", callback_data="HELP"),
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -67,10 +67,10 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
         [
             InlineKeyboardButton("🌍 Language", callback_data="language"),
-            InlineKeyboardButton("🔙 Back to Start", callback_data="back_to_start"),
+            InlineKeyboardButton("🔙 Back to Start", callback_data="close"),
         ],
         [
-            InlineKeyboardButton("➕ Add to Your Group", url="https://t.me/YOUR_BOT_USERNAME?startgroup=true"),
+            InlineKeyboardButton("➕ Add to Your Group", url="https://t.me/MUSKAN_STRINGBOT?startgroup=true"),
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -121,7 +121,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 InlineKeyboardButton("🇵🇰 Urdu", callback_data="set_language_urdu"),
             ],
             [
-                InlineKeyboardButton("🔙 Back to Help", callback_data="back_to_help"),
+                InlineKeyboardButton("🔙 Back", callback_data="close"),
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
