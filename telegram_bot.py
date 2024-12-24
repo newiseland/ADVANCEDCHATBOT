@@ -1,5 +1,6 @@
 import openai
 import os
+import requests
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -9,7 +10,7 @@ from telegram.ext import (
     ContextTypes,
 )
 
-# Set up OpenAI API key
+# Set up OpenAI API key (if you want to use OpenAI)
 openai.api_key = ("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")
 
 # Command: Start
@@ -24,20 +25,34 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 # Handle user messages
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Process user messages and fetch ChatGPT responses."""
+    """Process user messages and fetch DuckDuckGo responses."""
     user_message = update.message.text
+    
+    # DuckDuckGo API endpoint for search queries
+    duckduckgo_api_url = "https://api.duckduckgo.com/"
+    
+    # Parameters for DuckDuckGo search API
+    params = {
+        "q": user_message,
+        "format": "json",
+        "no_html": 1,
+        "skip_disambig": 1
+    }
+
     try:
-        # Fetch response from OpenAI
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": user_message}],
-            temperature=0.7,
-        )
-        reply = response["choices"][0]["message"]["content"].strip()
+        # Make request to DuckDuckGo API
+        response = requests.get(duckduckgo_api_url, params=params)
+        data = response.json()
+
+        # Check if the response contains a relevant answer
+        if "AbstractText" in data and data["AbstractText"]:
+            reply = data["AbstractText"]
+        else:
+            reply = "Sorry, I couldn't find any relevant information."
     except Exception as e:
         print(f"Error: {e}")
         reply = "Sorry, I couldn't process that. Please try again later."
-    
+
     await update.message.reply_text(reply)
 
 # Main function
