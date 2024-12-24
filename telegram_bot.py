@@ -1,34 +1,42 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
 from telegram import Update
-from telegram import filters  # Updated filters import
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    filters,
+    ContextTypes,
+)
 
-# Function to handle the /start command
-def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text("Hello! I am your bot. How can I assist you?")
+# Command: Start
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send a welcome message when the /start command is issued."""
+    await update.message.reply_text("Hello! I am your assistant bot. How can I help you?")
 
-# Function to handle regular messages
-def handle_message(update: Update, context: CallbackContext) -> None:
-    user_message = update.message.text.lower()
-    if "hello" in user_message:
-        update.message.reply_text("Hi there! How can I help you?")
-    elif "bye" in user_message:
-        update.message.reply_text("Goodbye! Have a great day!")
-    else:
-        update.message.reply_text("I'm not sure how to respond to that.")
+# Command: Help
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send help information when the /help command is issued."""
+    await update.message.reply_text("You can ask me questions or type commands!")
 
-# Main function to start the bot
+# Echo Functionality
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Echo the user's message."""
+    await update.message.reply_text(f"You said: {update.message.text}")
+
+# Main Function
 def main():
-    # Replace 'YOUR_BOT_TOKEN' with your actual bot token
-    bot_token = "7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w"
+    # Replace 'YOUR_BOT_TOKEN' with your bot's token from BotFather
+    application = ApplicationBuilder().token("7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w").build()
 
-    # Create the Updater and pass the bot token
-    updater = Updater(token=bot_token)
+    # Command Handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help_command))
 
-    # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+    # Message Handler (Echo functionality)
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
-    # Command handler for /start
-    dispatcher.add_handler(CommandHandler("start", start))
+    # Run the bot
+    print("Bot is running...")
+    application.run_polling()
 
-    # Message handler for all text messages
-    dispatcher.add
+if __name__ == "__main__":
+    main()
