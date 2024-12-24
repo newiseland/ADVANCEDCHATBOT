@@ -4,7 +4,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 from pymongo import MongoClient
 
 # MongoDB URI for connecting to the database
-MONGO_URI = "mongodb+srv://harryashutosh729:harryashutosh729@harry2.xykka.mongodb.net/?retryWrites=true&w=majority&appName=harry2/"  # Replace this with your MongoDB URI if needed
+MONGO_URI = "mongodb://localhost:27017/"  # Replace this with your MongoDB URI if needed
 DB_NAME = "telegram_bot_db"  # Database name
 COLLECTION_NAME = "auto_replies"  # Collection name for storing auto-replies
 
@@ -16,6 +16,9 @@ auto_reply_collection = db[COLLECTION_NAME]  # MongoDB collection for storing au
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a welcome message and a temporary sticker."""
+    bot_username = context.bot.username  # Get the bot's username
+    creator_username = "@creator_username"  # Replace with the actual creator's username
+
     # React with an emoji
     await update.message.reply_text("💗")
 
@@ -43,12 +46,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Welcome message
     welcome_message = (
         f"👋 **Hello, {update.effective_user.first_name}!**\n\n"
-        "✨ I am  powered by MongoDB-based auto-reply. Ask me anything!\n\n"
+        f"✨ I am your @{bot_username} powered by @SANATANI_BACHA, auto-reply bot. Ask me anything!\n\n"
         "🌟 **Special Features:**\n"
         "- 🌍 Change the reply language using the buttons below.\n"
         "- 🔍 Enjoy fast and accurate responses.\n\n"
         "💬 Feel free to explore and interact with me!\n\n"
-        "🔗 **Connect with us:** Use the buttons below to contact my owner or visit support resources.\n\n"
+        f"🔗 **Connect with us:** Use the buttons below to contact my owner or visit support resources.\n\n"
+        f"**Created by @SANATANI_BACHA**\n\n"
         "**Thank you for starting me! 🎉**"
     )
 
@@ -77,7 +81,7 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 # Main function
 def main():
     # Telegram bot token
-    application = ApplicationBuilder().token("7649873136:AAGgVobroAHZMV7_1gGVNjeUJ_M78oq6vik").build()  # Replace with your bot's token
+    application = ApplicationBuilder().token("YOUR_BOT_API_KEY").build()  # Replace with your bot's token
 
     # Command handlers
     application.add_handler(CommandHandler("start", start))
@@ -85,7 +89,7 @@ def main():
     # Message handler for auto-reply
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply))
 
-    print("BOT STARTED . DON'T FORGET TO TELL THANKS TO HARRY @SANATANI_BACHA")
+    print("Bot is running... Use /start to test it!")
     application.run_polling()
 
 if __name__ == "__main__":
