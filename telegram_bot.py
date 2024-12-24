@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 
 # Set up OpenAI API key
-openai.api_key = os.getenv("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")
+openai.api_key_path = <openai.txt>
 
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
