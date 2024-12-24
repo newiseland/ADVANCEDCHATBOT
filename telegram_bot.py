@@ -5,50 +5,53 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a welcome message with emojis and inline buttons."""
-    
-    # Inline buttons
+
+    # Inline buttons with links
     keyboard = [
         [
-            InlineKeyboardButton("🌍 English", callback_data="lang_en"),
-            InlineKeyboardButton("🇫🇷 Français", callback_data="lang_fr"),
+            InlineKeyboardButton("👤 Owner", url="https://t.me/SANATANI_BACHA"),
+            InlineKeyboardButton("📢 Support Channel", url="https://t.me/TG_NAME_STYLE"),
         ],
         [
-            InlineKeyboardButton("🇪🇸 Español", callback_data="lang_es"),
-            InlineKeyboardButton("🇩🇪 Deutsch", callback_data="lang_de"),
+            InlineKeyboardButton("💬 Support Group", url="https://t.me/TG_NAME_STYLE"),
+            InlineKeyboardButton("🌐 Network", url="https://t.me/TG_NAME_STYLE"),
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     # Welcome message with emojis
     welcome_message = (
-        "👋 **Hello!**\n\n"
+        "👋 **Hello, dear user!**\n\n"
         "✨ I am your assistant powered by DuckDuckGo search. Ask me anything!\n\n"
         "🌟 **Special Features:**\n"
-        "- Change my reply language using the buttons below.\n"
-        "- Enjoy fast and accurate search results.\n\n"
-        "💬 Feel free to ask me anything!\n\n"
+        "- 🌍 You can change the reply language by using the buttons below.\n"
+        "- 🔍 Enjoy fast and accurate search results.\n\n"
+        "💬 Feel free to explore and interact with me!\n\n"
+        "🔗 **Connect with us:** Use the buttons below to contact my owner or visit support resources.\n\n"
         "**Thank you for starting me! 🎉**"
     )
-    
+
     await update.message.reply_text(
         welcome_message,
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
 
+
 # Command: Help
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send help information when the /help command is issued."""
     await update.message.reply_text("You can ask me questions, and I'll provide you search-based answers!")
 
+
 # Handle user messages
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Process user messages and fetch DuckDuckGo responses."""
     user_message = update.message.text
-    
+
     # DuckDuckGo API endpoint for search queries
     duckduckgo_api_url = "https://api.duckduckgo.com/"
-    
+
     # Parameters for DuckDuckGo search API
     params = {
         "q": user_message,
@@ -73,6 +76,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     await update.message.reply_text(reply)
 
+
 # Main function
 def main():
     """Run the bot."""
@@ -89,6 +93,7 @@ def main():
     # Start the bot
     print("Bot is running, made by harry...")
     application.run_polling()
+
 
 if __name__ == "__main__":
     main()
