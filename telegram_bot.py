@@ -1,5 +1,3 @@
-import openai
-import os
 import requests
 from telegram import Update
 from telegram.ext import (
@@ -10,18 +8,15 @@ from telegram.ext import (
     ContextTypes,
 )
 
-# Set up OpenAI API key (if you want to use OpenAI)
-openai.api_key = ("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")
-
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a welcome message when the /start command is issued."""
-    await update.message.reply_text("Hello! I am your ChatGPT-powered assistant. Ask me anything!")
+    await update.message.reply_text("Hello! I am your assistant powered by DuckDuckGo search. Ask me anything!\nʜᴇʏ ᴅᴇᴀʀ {}\n\nᴛʜᴀɴᴋs ғᴏʀ sᴛᴀʀᴛ ᴍᴇ ɪɴ ɢʀᴏᴜᴘ ʏᴏᴜ ᴄᴀɴ ᴄʜᴀɴɢᴇ ʟᴀɴɢᴜᴀɢᴇ ʙʏ ᴄʟɪᴄᴋ ᴏɴ ɢɪᴠᴇɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴs.\nᴄʟɪᴄᴋ ᴀɴᴅ sᴇʟᴇᴄᴛ ʏᴏᴜʀ ғᴀᴠᴏᴜʀɪᴛᴇ ʟᴀɴɢᴜᴀɢᴇ ᴛᴏ sᴇᴛ ᴄʜᴀᴛ ʟᴀɴɢᴜᴀɢᴇ ғᴏʀ ʙᴏᴛ ʀᴇᴘʟʏ.\n\nᴛʜᴀɴᴋ ʏᴏᴜ ᴘʟᴇᴀsᴇ ᴇɴɪᴏʏ.")
 
 # Command: Help
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send help information when the /help command is issued."""
-    await update.message.reply_text("You can ask me questions, and I'll try my best to answer them!")
+    await update.message.reply_text("You can ask me questions, and I'll provide you search-based answers!")
 
 # Handle user messages
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -69,7 +64,7 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Start the bot
-    print("Bot is running made by harry...")
+    print("Bot is running, made by harry...")
     application.run_polling()
 
 if __name__ == "__main__":
