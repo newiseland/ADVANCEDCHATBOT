@@ -4,8 +4,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 from pymongo import MongoClient
 
 # MongoDB URI for connecting to the database
-MONGO_URI = "mongodb+srv://harryashutosh729:harryashutosh729@harry2.xykka.mongodb.net/?retryWrites=true&w=majority&appName=harry2"  # Replace this with your MongoDB URI if needed
-DB_NAME = "telegram_bot_db"  # Database name
+MONGO_URI = "mongodb://localhost:27017/"  # Replace this with your MongoDB URI if needed
+DB_NAME = "VIP_db"  # Database name
 COLLECTION_NAME = "auto_replies"  # Collection name for storing auto-replies
 
 # Connect to MongoDB
@@ -37,6 +37,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             InlineKeyboardButton("💬 Support Group", url="https://t.me/TG_NAME_STYLE"),
             InlineKeyboardButton("🌐 Network", url="https://t.me/TG_NAME_STYLE"),
         ],
+        [
+            InlineKeyboardButton("❓ Help", callback_data="help"),
+        ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -110,14 +113,43 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     data = query.data
 
     if data == "language":
-        # You can modify this to provide a list of language options
-        await query.answer("Language selection is not yet available!")
-        return
+        # Show language options
+        keyboard = [
+            [
+                InlineKeyboardButton("🇬🇧 English", callback_data="set_language_english"),
+                InlineKeyboardButton("🇮🇳 Hindi", callback_data="set_language_hindi"),
+                InlineKeyboardButton("🇵🇰 Urdu", callback_data="set_language_urdu"),
+            ],
+            [
+                InlineKeyboardButton("🔙 Back to Help", callback_data="back_to_help"),
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.answer()  # Acknowledge the button press
+        await query.edit_message_text(
+            text="Please select your preferred language:",
+            reply_markup=reply_markup
+        )
 
     elif data == "back_to_start":
         await start(update, context)  # Go back to the start message
 
-    await query.answer()
+    elif data == "back_to_help":
+        await help(update, context)  # Go back to the help message
+
+    elif data == "set_language_english":
+        await query.answer("Language set to English!")
+        # Store user preference in MongoDB or set in memory here
+        # For now, we'll just acknowledge the selection
+
+    elif data == "set_language_hindi":
+        await query.answer("भाषा हिंदी में सेट कर दी गई है!")
+        # Similarly, store user preference here
+
+    elif data == "set_language_urdu":
+        await query.answer("زبان اردو میں سیٹ کر دی گئی ہے!")
+        # Similarly, store user preference here
 
 # Main function
 def main():
