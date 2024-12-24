@@ -4,7 +4,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 from pymongo import MongoClient
 
 # MongoDB URI for connecting to the database
-MONGO_URI = "mongodb://localhost:27017/"  # Replace this with your MongoDB URI if needed
+MONGO_URI = "mongodb+srv://harryashutosh729:harryashutosh729@harry2.xykka.mongodb.net/?retryWrites=true&w=majority&appName=harry2/"  # Replace this with your MongoDB URI if needed
 DB_NAME = "telegram_bot_db"  # Database name
 COLLECTION_NAME = "auto_replies"  # Collection name for storing auto-replies
 
