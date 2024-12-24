@@ -1,10 +1,24 @@
+import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Send a welcome message with emojis and inline buttons."""
+    """Send a welcome message with emojis, inline buttons, a personalized greeting, and a temporary sticker."""
+
+    user = update.effective_user
+    username = f"@{user.username}" if user.username else user.first_name
+
+    # React with an emoji 💗
+    await update.message.reply_text("💗")
+
+    # Send a sticker (replace 'sticker_file_id' with an actual file ID or upload a sticker file)
+    sticker_message = await update.message.reply_sticker("CAACAgUAAxkBAAEFMY1kM3hrwMj9_6MK6k2B6KfBJmhKpwACRQADkUoFG7UXzHLAlSzoLwQ")
+
+    # Wait for 5 seconds before deleting the sticker message
+    await asyncio.sleep(5)
+    await context.bot.delete_message(chat_id=update.effective_chat.id, message_id=sticker_message.message_id)
 
     # Inline buttons with links
     keyboard = [
@@ -19,9 +33,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    # Welcome message with emojis
+    # Welcome message with emojis and personalized greeting
     welcome_message = (
-        "👋 **Hello, dear user!**\n\n"
+        f"👋 **Hello, {username}!**\n\n"
         "✨ I am your assistant powered by DuckDuckGo search. Ask me anything!\n\n"
         "🌟 **Special Features:**\n"
         "- 🌍 You can change the reply language by using the buttons below.\n"
@@ -38,57 +52,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-# Command: Help
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Send help information when the /help command is issued."""
-    await update.message.reply_text("You can ask me questions, and I'll provide you search-based answers!")
-
-
-# Handle user messages
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Process user messages and fetch DuckDuckGo responses."""
-    user_message = update.message.text
-
-    # DuckDuckGo API endpoint for search queries
-    duckduckgo_api_url = "https://api.duckduckgo.com/"
-
-    # Parameters for DuckDuckGo search API
-    params = {
-        "q": user_message,
-        "format": "json",
-        "no_html": 1,
-        "skip_disambig": 1
-    }
-
-    try:
-        # Make request to DuckDuckGo API
-        response = requests.get(duckduckgo_api_url, params=params)
-        data = response.json()
-
-        # Check if the response contains a relevant answer
-        if "AbstractText" in data and data["AbstractText"]:
-            reply = data["AbstractText"]
-        else:
-            reply = "Sorry, I couldn't find any relevant information."
-    except Exception as e:
-        print(f"Error: {e}")
-        reply = "Sorry, I couldn't process that. Please try again later."
-
-    await update.message.reply_text(reply)
-
-
 # Main function
 def main():
     """Run the bot."""
-    # Replace 'YOUR_BOT_TOKEN' with your Telegram Bot token
     application = ApplicationBuilder().token("7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w").build()
 
     # Command handlers
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-
-    # Message handler
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Start the bot
     print("Bot is running, made by harry...")
