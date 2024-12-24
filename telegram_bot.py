@@ -14,7 +14,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("💗")
 
     # Send a sticker (replace 'sticker_file_id' with an actual file ID or upload a sticker file)
-    sticker_message = await update.message.reply_sticker("CAACAgUAAxkBAAEFMY1kM3hrwMj9_6MK6k2B6KfBJmhKpwACRQADkUoFG7UXzHLAlSzoLwQ")
+    sticker_message = await update.message.reply_sticker("CAACAgUAAxkBAAEQI1hlTLog9AN9m9USFpWRCMlU8iMCVwACbQQAAjYSmFa")
 
     # Wait for 5 seconds before deleting the sticker message
     await asyncio.sleep(5)
