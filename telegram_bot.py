@@ -4,7 +4,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 from pymongo import MongoClient
 
 # MongoDB URI for connecting to the database
-MONGO_URI = "mongodb+srv://harryashutosh729:harryashutosh729@harry2.xykka.mongodb.net/?retryWrites=true&w=majority&appName=harry2"  # Replace this with your MongoDB URI if needed
+MONGO_URI = "mongodb://localhost:27017/"  # Replace this with your MongoDB URI if needed
 DB_NAME = "telegram_bot_db"  # Database name
 COLLECTION_NAME = "auto_replies"  # Collection name for storing auto-replies
 
@@ -43,7 +43,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Welcome message
     welcome_message = (
         f"👋 **Hello, {update.effective_user.first_name}!**\n\n"
-        "✨ I am @{bot_username} your assistant powered by @SANATANI_BACHA auto-reply. Ask me anything!\n\n"
+        "✨ I am your assistant powered by MongoDB-based auto-reply. Ask me anything!\n\n"
         "🌟 **Special Features:**\n"
         "- 🌍 Change the reply language using the buttons below.\n"
         "- 🔍 Enjoy fast and accurate responses.\n\n"
@@ -54,6 +54,35 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await update.message.reply_text(
         welcome_message,
+        reply_markup=reply_markup,
+        parse_mode="Markdown"
+    )
+
+# Command: Help
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send a help message with inline buttons for language options, back to start, and add to group."""
+    keyboard = [
+        [
+            InlineKeyboardButton("🌍 Language", callback_data="language"),
+            InlineKeyboardButton("🔙 Back to Start", callback_data="back_to_start"),
+        ],
+        [
+            InlineKeyboardButton("➕ Add to Your Group", url="https://t.me/YOUR_BOT_USERNAME?startgroup=true"),
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    help_message = (
+        "👋 **Welcome to Help Section!**\n\n"
+        "I'm here to assist you with answers to your questions. You can:\n\n"
+        "- 🌍 Choose a language for the replies.\n"
+        "- 🔙 Go back to the start message.\n"
+        "- ➕ Add me to your group.\n\n"
+        "Feel free to ask any questions, and I'll try to help!"
+    )
+
+    await update.message.reply_text(
+        help_message,
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
@@ -74,16 +103,36 @@ async def auto_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     # Send the response to the user
     await update.message.reply_text(bot_response)
 
+# Callback Query Handler for Inline Button Actions
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle button clicks for language selection, back to start, and adding to group."""
+    query = update.callback_query
+    data = query.data
+
+    if data == "language":
+        # You can modify this to provide a list of language options
+        await query.answer("Language selection is not yet available!")
+        return
+
+    elif data == "back_to_start":
+        await start(update, context)  # Go back to the start message
+
+    await query.answer()
+
 # Main function
 def main():
     # Telegram bot token
-    application = ApplicationBuilder().token("7649873136:AAGgVobroAHZMV7_1gGVNjeUJ_M78oq6vik").build()  # Replace with your bot's token
+    application = ApplicationBuilder().token("YOUR_BOT_API_KEY").build()  # Replace with your bot's token
 
     # Command handlers
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help))  # Add help command
 
     # Message handler for auto-reply
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, auto_reply))
+
+    # Callback Query handler
+    application.add_handler(CallbackQueryHandler(button))
 
     print("Bot is running... Use /start to test it!")
     application.run_polling()
