@@ -1,16 +1,17 @@
 {
-  "name": "Telegram GPT Bot",
-  "description": "A Telegram bot powered by OpenAI's GPT API.",
+  "name": "Telegram Bot",
+  "description": "A Telegram bot powered by Python and OpenAI.",
   "repository": "https://github.com/newiseland/ADVANCEDCHATBOT",
-  "stack": "container",
+  "keywords": ["python", "telegram", "bot", "openai"],
+  "stack": "heroku-22",
   "env": {
     "TELEGRAM_BOT_TOKEN": {
-      "description": "7649873136:AAGEAntpJYkdI4sF5rdfW5BHv-5ukvNnh1w",
+      "description": "The API token for your Telegram bot from BotFather.",
       "required": true
     },
     "OPENAI_API_KEY": {
-      "description": "OpenAI API Key",
-      "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": true
+      "description": "The API key for OpenAI to access GPT.",
+      "required": true
     }
   }
 }
