@@ -1,17 +1,40 @@
-import requests
-from telegram import Update
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    MessageHandler,
-    filters,
-    ContextTypes,
-)
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+
 
 # Command: Start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Send a welcome message when the /start command is issued."""
-    await update.message.reply_text("Hello! I am your assistant powered by DuckDuckGo search. Ask me anything!\nʜᴇʏ ᴅᴇᴀʀ {}\n\nᴛʜᴀɴᴋs ғᴏʀ sᴛᴀʀᴛ ᴍᴇ ɪɴ ɢʀᴏᴜᴘ ʏᴏᴜ ᴄᴀɴ ᴄʜᴀɴɢᴇ ʟᴀɴɢᴜᴀɢᴇ ʙʏ ᴄʟɪᴄᴋ ᴏɴ ɢɪᴠᴇɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴs.\nᴄʟɪᴄᴋ ᴀɴᴅ sᴇʟᴇᴄᴛ ʏᴏᴜʀ ғᴀᴠᴏᴜʀɪᴛᴇ ʟᴀɴɢᴜᴀɢᴇ ᴛᴏ sᴇᴛ ᴄʜᴀᴛ ʟᴀɴɢᴜᴀɢᴇ ғᴏʀ ʙᴏᴛ ʀᴇᴘʟʏ.\n\nᴛʜᴀɴᴋ ʏᴏᴜ ᴘʟᴇᴀsᴇ ᴇɴɪᴏʏ.")
+    """Send a welcome message with emojis and inline buttons."""
+    
+    # Inline buttons
+    keyboard = [
+        [
+            InlineKeyboardButton("🌍 English", callback_data="lang_en"),
+            InlineKeyboardButton("🇫🇷 Français", callback_data="lang_fr"),
+        ],
+        [
+            InlineKeyboardButton("🇪🇸 Español", callback_data="lang_es"),
+            InlineKeyboardButton("🇩🇪 Deutsch", callback_data="lang_de"),
+        ],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    # Welcome message with emojis
+    welcome_message = (
+        "👋 **Hello!**\n\n"
+        "✨ I am your assistant powered by DuckDuckGo search. Ask me anything!\n\n"
+        "🌟 **Special Features:**\n"
+        "- Change my reply language using the buttons below.\n"
+        "- Enjoy fast and accurate search results.\n\n"
+        "💬 Feel free to ask me anything!\n\n"
+        "**Thank you for starting me! 🎉**"
+    )
+    
+    await update.message.reply_text(
+        welcome_message,
+        reply_markup=reply_markup,
+        parse_mode="Markdown"
+    )
 
 # Command: Help
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
